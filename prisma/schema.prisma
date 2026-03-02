@@ -1,0 +1,56 @@
+
+generator client {
+  provider = "prisma-client"
+  output = "..src/generated"
+  previewFeatures = ["driverAdapters"]
+}
+
+
+datasource db {
+  provider  = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recipes     Recipe[]
+  pantryItems PantryItem[]
+}
+
+model Recipe {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  ingredients Json
+  steps       Json
+  imageUrl    String?
+  cuisine     String?
+  category    String?
+  cookTime    Int?
+  servings    Int?
+  isAiGenerated Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PantryItem {
+  id        String   @id @default(cuid())
+  name      String
+  quantity  String?
+  unit      String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
