@@ -51,7 +51,7 @@ export default function HomePage() {
                 Turn your{" "}
                 <span className="relative inline-block text-primary italic">
                   leftovers
-                  {/* Underline squiggle */}
+                 
                   <svg
                     className="absolute -bottom-1 left-0 w-full"
                     viewBox="0 0 220 8"
@@ -133,7 +133,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* ── Right — Recipe Card Visual ───────────────── */}
+
             <div className="flex-shrink-0 w-full max-w-sm lg:max-w-md relative">
 
               {/* Main card */}

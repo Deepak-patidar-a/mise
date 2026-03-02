@@ -16,6 +16,7 @@ if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = db
 }
 
+
 // Why this pattern and not just new PrismaClient()?
 // In development, Next.js uses hot reloading — every time you save a file, the server restarts.
 //  If you just did new PrismaClient() directly, every restart would create a new database connection. 
