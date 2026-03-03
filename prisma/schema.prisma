@@ -1,45 +1,72 @@
-
 generator client {
-  provider = "prisma-client"
-  output = "..src/generated"
+  provider        = "prisma-client-js"
+  output          = "../src/generated"
   previewFeatures = ["driverAdapters"]
 }
 
-
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
+}
+
+enum SubscriptionTier {
+  FREE
+  PRO
+}
+
+enum Cuisine {
+  INDIAN
+  ITALIAN
+  CHINESE
+  MEXICAN
+  OTHER
+}
+
+enum Category {
+  VEG
+  NON_VEG
+  VEGAN
+  DESSERT
+  SNACK
 }
 
 model User {
-  id        String   @id @default(cuid())
-  clerkId   String   @unique
-  email     String   @unique
-  name      String?
-  imageUrl  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               String           @id @default(cuid())
+  clerkId          String           @unique
+  email            String           @unique
+  name             String?
+  imageUrl         String?
+  subscriptionTier SubscriptionTier @default(FREE)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 
-  recipes     Recipe[]
-  pantryItems PantryItem[]
+  recipes      Recipe[]
+  pantryItems  PantryItem[]
+  savedRecipes SavedRecipe[]
 }
 
 model Recipe {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  ingredients Json
-  steps       Json
-  imageUrl    String?
-  cuisine     String?
-  category    String?
-  cookTime    Int?
-  servings    Int?
-  isAiGenerated Boolean @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String    @id @default(cuid())
+  title         String
+  description   String?
+  cuisine       Cuisine   @default(OTHER)
+  category      Category
+  ingredients   Json
+  steps         Json
+  imageUrl      String?
+  prepTime      Int?
+  cookTime      Int?
+  servings      Int?
+  isPublic      Boolean   @default(false)
+  nutrition     Json?
+  tips          Json?
+  substitutions Json?
+  isAiGenerated Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  savedByUsers SavedRecipe[]
 }
 
 model PantryItem {
@@ -53,4 +80,17 @@ model PantryItem {
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SavedRecipe {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recipeId])
 }
