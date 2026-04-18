@@ -102,12 +102,12 @@ export default function HomePage() {
                 </SignedOut>
 
                 <SignedIn>
-                  <Link href="/recipes" className="w-full sm:w-auto">
+                  <Link href="/explore" className="w-full sm:w-auto">
                     <Button
                       size="lg"
                       className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-semibold rounded-full px-8 py-6 text-base shadow-[0_8px_24px_rgba(232,82,10,0.35)] hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group"
                     >
-                      Go to My Recipes
+                      Explore Recipes
                       <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </Link>
