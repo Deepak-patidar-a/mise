@@ -121,3 +121,23 @@ export const getCategoriesWithEmojis = async () => {
     }
     return []
 }
+
+export const getMealById = async (id: string) => {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/lookup.php?i=${id}`,
+      { next: { revalidate: 86400 } }
+    )
+    if (!res.ok) throw new Error("Failed to fetch meal")
+    const data = await res.json()
+
+    if (!data.meals || data.meals.length === 0) {
+      return { success: false, meal: null }
+    }
+
+    return { success: true, meal: data.meals[0] }
+  } catch (error) {
+    console.error("getMealById error:", error)
+    return { success: false, meal: null }
+  }
+}

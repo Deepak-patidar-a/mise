@@ -11,45 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-// ─── Types ────────────────────────────────────────────────
-
-// MealDB recipe (explore/category/cuisine pages)
-type MealDBRecipe = {
-  strMeal: string;
-  strMealThumb: string;
-  idMeal: string;
-};
-
-// AI pantry-generated recipe
-type PantryRecipe = {
-  title: string;
-  description?: string;
-  category?: string;
-  cuisine?: string;
-  prepTime?: number;
-  cookTime?: number;
-  servings?: number;
-  matchPercentage: number;
-  missingIngredients?: string[];
-  imageUrl?: string;
-};
-
-// User's own DB recipe
-type DBRecipe = {
-  title: string;
-  description?: string;
-  category?: string;
-  cuisine?: string;
-  prepTime?: number;
-  cookTime?: number;
-  servings?: number;
-  imageUrl?: string;
-};
-
-type Recipe = MealDBRecipe | PantryRecipe | DBRecipe;
-
-type Variant = "grid" | "pantry" | "list" | "default";
+import { MealDBRecipe,PantryRecipe,DBRecipe,Recipe,Variant} from "@/types/recipe";
 
 type Props = {
   recipe: Recipe;
@@ -105,7 +67,7 @@ export default function RecipeCard({ recipe, variant = "default" }: Props) {
       return {
         title:     recipe.strMeal,
         image:     recipe.strMealThumb,
-        href:      `/recipe?cook=${encodeURIComponent(recipe.strMeal)}`,
+        href:      `/explore/${recipe.idMeal}`,
         showImage: true,
       };
     }
@@ -122,7 +84,7 @@ export default function RecipeCard({ recipe, variant = "default" }: Props) {
         matchPercentage:     recipe.matchPercentage,
         missingIngredients:  recipe.missingIngredients ?? [],
         image:               recipe.imageUrl,
-        href:                `/recipe?cook=${encodeURIComponent(recipe.title)}`,
+        href:                `/recipes/${recipe.id}`,
         showImage:           !!recipe.imageUrl,
       };
     }
@@ -137,7 +99,7 @@ export default function RecipeCard({ recipe, variant = "default" }: Props) {
       cookTime:  recipe.cookTime,
       servings:  recipe.servings,
       image:     recipe.imageUrl,
-      href:      `/recipe?cook=${encodeURIComponent(recipe.title)}`,
+      href:      `/recipes/${recipe.id}`,
       showImage: !!recipe.imageUrl,
     };
   };

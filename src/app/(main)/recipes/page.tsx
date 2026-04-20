@@ -1,97 +1,139 @@
-"use client";
+"use client"
 
-import { useEffect } from "react";
-import { Bookmark, Loader2, ChefHat } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { getSavedRecipes } from "@/lib/actions/recipe.actions";
+import { useEffect } from "react"
+import { Bookmark, Loader2, ChefHat } from "lucide-react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { getSavedRecipes } from "@/lib/actions/recipe.actions"
+import { useFetch } from "@/hooks/use-fetch"
+import RecipeCard from "@/components/RecipeCard"
+import type { DBRecipe } from "@/types/recipe"
 
-import { useFetch } from "@/hooks/use-fetch";
-import RecipeCard from "@/components/RecipeCard";
-type Recipe = {
-  id: string;
-  name: string;
-};
+// ─── Types ─────────────────────────────────────────────────
+type SavedRecipesResult = {
+  success: boolean
+  recipes: DBRecipe[]
+  error?: string
+}
 
+// ─── Loading Skeleton ───────────────────────────────────────
+function RecipeListSkeleton() {
+  return (
+    <div className="grid md:grid-cols-2 gap-6">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div
+          key={i}
+          className="bg-card border border-border rounded-2xl overflow-hidden flex animate-pulse"
+        >
+          <div className="w-48 aspect-square bg-muted flex-shrink-0" />
+          <div className="flex-1 p-5 space-y-3">
+            <div className="h-3 bg-muted rounded w-1/3" />
+            <div className="h-5 bg-muted rounded w-3/4" />
+            <div className="h-3 bg-muted rounded w-full" />
+            <div className="h-3 bg-muted rounded w-2/3" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ─── Empty State ────────────────────────────────────────────
+function EmptyState() {
+  return (
+    <div className="flex flex-col items-center justify-center text-center py-20 gap-5 border-2 border-dashed border-border rounded-2xl bg-card">
+      <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+        <Bookmark className="w-10 h-10 text-primary" />
+      </div>
+      <div className="space-y-1">
+        <h3 className="font-serif text-2xl font-bold text-foreground">
+          No saved recipes yet
+        </h3>
+        <p className="text-muted-foreground max-w-sm text-sm">
+          Start exploring recipes and save your favorites to build your
+          personal cookbook!
+        </p>
+      </div>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Link href="/explore">
+          <Button className="bg-primary hover:bg-primary/90 text-white rounded-full gap-2 shadow-[0_4px_16px_rgba(232,82,10,0.3)]">
+            <ChefHat className="w-4 h-4" />
+            Explore Recipes
+          </Button>
+        </Link>
+        <Link href="/pantry">
+          <Button
+            variant="outline"
+            className="rounded-full border-border hover:border-primary hover:text-primary gap-2"
+          >
+            Check Your Pantry
+          </Button>
+        </Link>
+      </div>
+    </div>
+  )
+}
+
+// ─── Main Page ──────────────────────────────────────────────
 export default function SavedRecipesPage() {
-    const {
+  const {
     loading,
     data: recipesData,
     fn: fetchSavedRecipes,
-    } = useFetch<Recipe[]>(getSavedRecipes);
+  } = useFetch<SavedRecipesResult, []>(getSavedRecipes)
 
   useEffect(() => {
-    fetchSavedRecipes();
-  }, []);
+    fetchSavedRecipes()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  const recipes = recipesData || [];
+  const recipes = recipesData?.recipes ?? []
 
   return (
-    <div className="min-h-screen bg-stone-50 pt-24 pb-16 px-4">
-      <div className="container mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="flex items-center gap-1 mb-8">
-          <Bookmark className="w-25 h-25 text-orange-600 " />
-          <div>
-            <h1 className="text-4xl md:text-6xl font-bold text-stone-900 tracking-tight leading-tight">
-              My Saved Recipes
-            </h1>
-            <p className="text-stone-600">
-              Your personal collection of favorite recipes
-            </p>
-          </div>
+    <div className="space-y-8">
+
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <Bookmark className="w-6 h-6 text-primary" />
         </div>
-
-        {/* Loading State */}
-        {loading && (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-12 h-12 text-orange-600 animate-spin mb-6" />
-            <p className="text-stone-600">Loading your saved recipes...</p>
-          </div>
-        )}
-
-        {/* Recipes Grid */}
-        {!loading && recipes.length > 0 && (
-          <div className="grid md:grid-cols-2 gap-6">
-            {recipes.map((recipe) => (
-              <RecipeCard
-                key={recipe.id}
-                recipe={recipe}
-                variant="list"
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Empty State */}
-        {!loading && recipes.length === 0 && (
-          <div className="bg-white rounded-3xl p-12 text-center border-2 border-dashed border-stone-200">
-            <div className="bg-orange-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Bookmark className="w-10 h-10 text-orange-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-stone-900 mb-2">
-              No Saved Recipes Yet
-            </h3>
-            <p className="text-stone-600 mb-8 max-w-md mx-auto">
-              Start exploring recipes and save your favorites to build your
-              personal cookbook!
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/dashboard">
-                <Button className="bg-orange-600 hover:bg-orange-700 text-white gap-2">
-                  <ChefHat className="w-4 h-4" />
-                  Explore Recipes
-                </Button>
-              </Link>
-              <Link href="/pantry">
-                <Button variant="outline" className="border-stone-300 gap-2">
-                  Check Your Pantry
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
+        <div>
+          <h1 className="font-serif text-4xl sm:text-5xl font-black text-foreground tracking-tight leading-tight">
+            My Saved Recipes
+          </h1>
+          <p className="text-muted-foreground text-sm mt-0.5">
+            Your personal collection of favourite recipes
+          </p>
+        </div>
       </div>
+
+      {/* Count badge — only when loaded */}
+      {!loading && recipes.length > 0 && (
+        <p className="text-sm text-muted-foreground">
+          <span className="font-semibold text-foreground">{recipes.length}</span>{" "}
+          {recipes.length === 1 ? "recipe" : "recipes"} saved
+        </p>
+      )}
+
+      {/* Loading */}
+      {loading && <RecipeListSkeleton />}
+
+      {/* Recipe Grid */}
+      {!loading && recipes.length > 0 && (
+        <div className="grid md:grid-cols-2 gap-5 sm:gap-6">
+          {recipes.map((recipe) => (
+            <RecipeCard
+              key={recipe.id}
+              recipe={recipe}
+              variant="list"
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Empty */}
+      {!loading && recipes.length === 0 && <EmptyState />}
+
     </div>
-  );
+  )
 }
