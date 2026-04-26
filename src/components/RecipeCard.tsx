@@ -20,19 +20,19 @@ type Props = {
 
 // ─── Normalized shape returned by getRecipeData ───────────
 type NormalizedRecipe = {
-  title: string;
-  description?: string;
-  category?: string;
-  cuisine?: string;
-  prepTime?: number;
-  cookTime?: number;
-  servings?: number;
-  matchPercentage?: number;
-  missingIngredients?: string[];
-  image?: string;
-  href: string;
-  showImage: boolean;
-};
+  title:               string
+  description:         string | null | undefined
+  category:            string | null | undefined
+  cuisine:             string | null | undefined
+  prepTime:            number | null | undefined
+  cookTime:            number | null | undefined
+  servings:            number | null | undefined
+  matchPercentage?:    number
+  missingIngredients?: string[]
+  image:               string | null | undefined
+  href:                string
+  showImage:           boolean
+}
 
 // ─── Type Guards ──────────────────────────────────────────
 function isMealDBRecipe(r: Recipe): r is MealDBRecipe {
@@ -65,43 +65,51 @@ export default function RecipeCard({ recipe, variant = "default" }: Props) {
   const getRecipeData = (): NormalizedRecipe => {
     if (isMealDBRecipe(recipe)) {
       return {
-        title:     recipe.strMeal,
-        image:     recipe.strMealThumb,
-        href:      `/explore/${recipe.idMeal}`,
-        showImage: true,
-      };
+        title:               recipe.strMeal,
+        image:               recipe.strMealThumb,
+        href:                `/explore/${recipe.idMeal}`,
+        showImage:           true,
+        description:         null,
+        category:            null,
+        cuisine:             null,
+        prepTime:            null,
+        cookTime:            null,
+        servings:            null,
+      }
     }
 
     if (isPantryRecipe(recipe)) {
       return {
         title:               recipe.title,
-        description:         recipe.description,
-        category:            recipe.category,
-        cuisine:             recipe.cuisine,
-        prepTime:            recipe.prepTime,
-        cookTime:            recipe.cookTime,
-        servings:            recipe.servings,
+        description:         recipe.description         ?? null,
+        category:            recipe.category            ?? null,
+        cuisine:             recipe.cuisine             ?? null,
+        prepTime:            recipe.prepTime            ?? null,
+        cookTime:            recipe.cookTime            ?? null,
+        servings:            recipe.servings            ?? null,
         matchPercentage:     recipe.matchPercentage,
-        missingIngredients:  recipe.missingIngredients ?? [],
-        image:               recipe.imageUrl,
-        href:                `/recipes/${recipe.id}`,
+        missingIngredients:  recipe.missingIngredients  ?? [],
+        image:               recipe.imageUrl            ?? null,
+        href:                `/recipe?cook=${encodeURIComponent(recipe.title)}`,
         showImage:           !!recipe.imageUrl,
-      };
+      }
     }
 
     // DB recipe
     return {
-      title:     recipe.title,
-      description: recipe.description,
-      category:  recipe.category,
-      cuisine:   recipe.cuisine,
-      prepTime:  recipe.prepTime,
-      cookTime:  recipe.cookTime,
-      servings:  recipe.servings,
-      image:     recipe.imageUrl,
-      href:      `/recipes/${recipe.id}`,
-      showImage: !!recipe.imageUrl,
-    };
+      title:               recipe.title,
+      description:         recipe.description,
+      category:            recipe.category,
+      cuisine:             recipe.cuisine,
+      prepTime:            recipe.prepTime,
+      cookTime:            recipe.cookTime,
+      servings:            recipe.servings,
+      image:               recipe.imageUrl,
+      href:                `/recipes/${recipe.id}`,
+      showImage:           !!recipe.imageUrl,
+      matchPercentage:     undefined,
+      missingIngredients:  undefined,
+    }
   };
 
   const data = getRecipeData();

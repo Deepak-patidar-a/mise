@@ -8,7 +8,7 @@ export const syncUser = async () => {
 
     //check
     if(!clerkUser || !userId) {
-        console.log("No user found in Clerk")
+        
         return
     }
 
@@ -20,7 +20,7 @@ export const syncUser = async () => {
     })
 
     if(existinguser) {
-        console.log("User already exists in database")
+        
         return
     }
 
@@ -31,6 +31,7 @@ export const syncUser = async () => {
             email: clerkUser.emailAddresses[0].emailAddress,
             name: `${clerkUser.firstName ?? ""} ${clerkUser.lastName ?? ""}`.trim(),
             imageUrl: clerkUser.imageUrl,
+            subscriptionTier: "FREE",
         }
     })
 

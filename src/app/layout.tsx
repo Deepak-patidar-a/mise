@@ -58,7 +58,7 @@ export default async function RootLayout({
                 &copy; {new Date().getFullYear()} Mise. All rights reserved.
               </p>
               <p className="text-sm text-muted-foreground">
-                Made with ❤️ for Bhukkad&apos;s
+                Made with ❤️ for true food Lover&apos;s
               </p>
             </div>
           </footer>

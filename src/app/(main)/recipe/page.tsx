@@ -261,7 +261,7 @@ function RecipeContent() {
     },
     {}
   );
-  console.log("recipe", recipe);
+  
   // ── Main render ──────────────────────────────────────────
   return (
     <div className="space-y-8">
